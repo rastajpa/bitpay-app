@@ -1,12 +1,13 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   CtaContainer as _CtaContainer,
+  Hr,
   SearchContainer,
   SearchInput,
 } from '../../../components/styled/Containers';
 import Button from '../../../components/button/Button';
 import styled, {useTheme} from 'styled-components/native';
-import {Paragraph} from '../../../components/styled/Text';
+import {H5, H7, Paragraph} from '../../../components/styled/Text';
 import {NeutralSlate} from '../../../styles/colors';
 import {useLogger} from '../../../utils/hooks/useLogger';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -24,6 +25,10 @@ import ContactsSvg from '../../../../assets/img/tab-icons/contacts.svg';
 import SettingsContactRow from '../../../components/list/SettingsContactRow';
 import {useAppDispatch, useAppSelector} from '../../../utils/hooks';
 import {ContactRowProps} from '../../../components/list/ContactRow';
+import { Recipient, TxDetailsSendingTo } from '../../../store/wallet/wallet.models';
+import { FlatList, View } from 'react-native';
+import { RecipientContainer, RecipientList, RecipientRowContainer } from '../screens/SendToOptions';
+import { CurrencyImage } from '../../../components/currency-image/CurrencyImage';
 
 const ScrollViewContainer = styled.ScrollView`
   margin-top: 20px;
@@ -50,7 +55,10 @@ const SendToContact = () => {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const route = useRoute<RouteProp<WalletStackParamList, 'SendToOptions'>>();
-  const {wallet} = route.params;
+  const {wallet,recipients} = route.params;
+  const [recipientList, setRecipientList] = useState<Recipient[]>(
+    recipients || [],
+  );
   const {
     currencyAbbreviation,
     credentials: {network},
@@ -64,15 +72,19 @@ const SendToContact = () => {
         contact.email?.toLowerCase().includes(searchInput.toLowerCase())),
   );
 
+  const renderItem = useCallback(
+    ({item}) => {
+      return (
+        <RecipientList recipient={item} wallet={wallet}></RecipientList>
+        )
+    },
+    [wallet],
+  );
+  
   return (
     <>
       <SendToContactContainer>
-        <Paragraph>
-          {t(
-            'To get started, you’ll need to enter a valid address or select an existing contact or wallet.',
-          )}
-        </Paragraph>
-        <SearchContainer style={{marginTop: 25, height: 54}}>
+        <SearchContainer style={{height: 54}}>
           <SearchInput
             placeholder={t('Search contact')}
             placeholderTextColor={placeHolderTextColor}
@@ -82,6 +94,30 @@ const SendToContact = () => {
             }}
           />
         </SearchContainer>
+        <View style={{marginTop: 10}}>
+          <H5>
+            {recipientList?.length > 1 ? t('Recipients') : t('Recipient')}
+          </H5>
+          <Hr />
+          {recipientList && recipientList.length ? (
+            <FlatList
+              data={recipientList}
+              keyExtractor={item => item.address}
+              renderItem={renderItem}
+            />
+          ) : (
+            <>
+              <RecipientRowContainer>
+                <H7>
+                  {t(
+                    'To get started, you’ll need to enter a valid address or select an existing contact or wallet.',
+                  )}
+                </H7>
+              </RecipientRowContainer>
+              <Hr />
+            </>
+          )}
+        </View>
 
         <ScrollViewContainer>
           {contacts.length > 0 ? (
