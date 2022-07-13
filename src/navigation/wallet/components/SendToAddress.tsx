@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useState} from 'react';
 import {
   CtaContainer as _CtaContainer,
   Hr,
@@ -7,7 +7,7 @@ import {
 } from '../../../components/styled/Containers';
 import Button from '../../../components/button/Button';
 import styled, {useTheme} from 'styled-components/native';
-import {BaseText, H5, H7, Paragraph} from '../../../components/styled/Text';
+import {BaseText, H5, H7} from '../../../components/styled/Text';
 import {Caution, NeutralSlate} from '../../../styles/colors';
 import {useDispatch} from 'react-redux';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -40,19 +40,19 @@ import {
 } from '../../../store/app/app.actions';
 import {BchLegacyAddressInfo, Mismatch} from './ErrorMessages';
 import {OnGoingProcessMessages} from '../../../components/modal/ongoing-process/OngoingProcess';
-import {
-  Recipient,
-  TxDetailsSendingTo,
-} from '../../../store/wallet/wallet.models';
+import {Recipient} from '../../../store/wallet/wallet.models';
 import KeyWalletsRow, {
   KeyWallet,
   KeyWalletsRowProps,
 } from '../../../components/list/KeyWalletsRow';
 import {BuildKeyWalletRow} from '../screens/send/SendTo';
 import {useAppSelector} from '../../../utils/hooks';
-import {CurrencyImage} from '../../../components/currency-image/CurrencyImage';
 import _ from 'lodash';
-import { RecipientContainer, RecipientList, RecipientRowContainer } from '../screens/SendToOptions';
+import {
+  RecipientList,
+  RecipientRowContainer,
+  SendToOptionsContext,
+} from '../screens/SendToOptions';
 
 const ValidDataTypes: string[] = [
   'BitcoinAddress',
@@ -82,24 +82,20 @@ const CtaContainer = styled(_CtaContainer)`
   padding: 10px 16px;
 `;
 
-
 const SendToAddress = () => {
   const {t} = useTranslation();
   const theme = useTheme();
   const placeHolderTextColor = theme.dark ? NeutralSlate : '#6F7782';
   const [searchInput, setSearchInput] = useState('');
-  // const [recipient, setRecipient] = useState<Recipient>();
   const [errorMessage, setErrorMessage] = useState('');
   const defaultAltCurrency = useAppSelector(({APP}) => APP.defaultAltCurrency);
   const {keys, rates} = useAppSelector(({WALLET}: RootState) => WALLET);
-
+  const {recipientList, setRecipientListContext} =
+    useContext(SendToOptionsContext);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const route = useRoute<RouteProp<WalletStackParamList, 'SendToOptions'>>();
-  const {wallet, recipients} = route.params;
-  const [recipientList, setRecipientList] = useState<Recipient[]>(
-    recipients || [],
-  );
+  const {wallet, context} = route.params;
   const {
     currencyAbbreviation,
     id,
@@ -181,7 +177,6 @@ const SendToAddress = () => {
       }
     } else {
       setErrorMessage(text.length > 15 ? 'Invalid Address' : '');
-      // setRecipient(undefined);
     }
   };
 
@@ -191,7 +186,7 @@ const SendToAddress = () => {
 
   const addRecipient = (newRecipient: Recipient) => {
     if (!recipientList.find(r => r.address === newRecipient.address)) {
-      setRecipientList(prev => [...prev, newRecipient]);
+      setRecipientListContext(newRecipient);
     }
   };
 
@@ -227,35 +222,34 @@ const SendToAddress = () => {
         keyId,
         address,
       });
-
-      // goToNextView({
-      //   type: 'wallet',
-      //   name: walletName || credentials.walletName,
-      //   walletId,
-      //   keyId,
-      //   address,
-      // });
     } catch (err) {
       console.error(err);
     }
   };
 
-  const goToNextView = (walletRecipient?: Recipient) => {
-    navigation.navigate('Wallet', {
-      screen: 'SelectInputs',
-      params: {
-        recipient: walletRecipient || recipientList[0],
-        wallet,
-      },
-    });
+  const goToNextView = () => {
+    if (context === 'selectInputs') {
+      navigation.navigate('Wallet', {
+        screen: 'SelectInputs',
+        params: {
+          recipient: recipientList[0],
+          wallet,
+        },
+      });
+    } else {
+      // TODO
+    }
   };
-
 
   const renderItem = useCallback(
     ({item}) => {
       return (
-        <RecipientList recipient={item} wallet={wallet}></RecipientList>
-        )
+        <RecipientList
+          recipient={item}
+          wallet={wallet}
+          deleteRecipient={() => setRecipientListContext(item, true)}
+        />
+      );
     },
     [wallet],
   );
@@ -310,7 +304,7 @@ const SendToAddress = () => {
           {recipientList && recipientList.length ? (
             <FlatList
               data={recipientList}
-              keyExtractor={item => item.address}
+              keyExtractor={(_item, index) => index.toString()}
               renderItem={renderItem}
             />
           ) : (
