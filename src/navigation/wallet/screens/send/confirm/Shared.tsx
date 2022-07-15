@@ -128,7 +128,7 @@ export const SendingTo = ({
   const {t} = useTranslation();
   const [copied, setCopied] = useState(false);
   const [showRecipientCards, setShowRecipientCards] = useState(true);
-  
+
   useEffect(() => {
     if (!copied) {
       return;

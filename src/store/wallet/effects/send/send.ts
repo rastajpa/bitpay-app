@@ -114,7 +114,7 @@ export const createProposalAndBuildTxDetails =
 
         if (
           currencyAbbreviation === 'xrp' &&
-          wallet.receiveAddress === recipient?.address
+          wallet.receiveAddress === recipient.address
         ) {
           return reject({
             err: new Error(
@@ -129,7 +129,6 @@ export const createProposalAndBuildTxDetails =
           customFeeLevel ||
           cachedFeeLevel[currencyAbbreviation] ||
           FeeLevels.NORMAL;
-
         if (!feePerKb && tx.sendMax) {
           feePerKb = await getFeeRatePerKb({
             wallet,
@@ -145,7 +144,7 @@ export const createProposalAndBuildTxDetails =
               context,
               currency: currencyAbbreviation,
               tokenAddress: token ? token.address : null,
-              toAddress: recipient?.address,
+              toAddress: recipient.address,
               amount: formattedAmount.amountSat,
               network: credentials.network,
               payProUrl,
@@ -156,7 +155,6 @@ export const createProposalAndBuildTxDetails =
           )),
           dryRun,
         } as Partial<TransactionProposal>;
-        console.log('-----||txp', txp);
 
         wallet.createTxProposal(
           txp,

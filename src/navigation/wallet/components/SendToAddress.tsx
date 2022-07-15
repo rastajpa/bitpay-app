@@ -1,5 +1,6 @@
 import React, {useCallback, useContext, useState} from 'react';
 import {
+  ActiveOpacity,
   CtaContainer as _CtaContainer,
   Hr,
   SearchContainer,
@@ -52,8 +53,6 @@ import {
   RecipientRowContainer,
   SendToOptionsContext,
 } from '../screens/SendToOptions';
-import {handleCreateTxProposalError} from '../../../store/wallet/effects/send/send';
-import {sleep} from '../../../utils/helper-methods';
 
 const ValidDataTypes: string[] = [
   'BitcoinAddress',
@@ -190,7 +189,7 @@ const SendToAddress = () => {
   }, 300);
 
   const addRecipient = (newRecipient: Recipient) => {
-    if (!recipientList.find(r => r.address === newRecipient.address)) {
+    if (!recipientList.some(r => r.address === newRecipient.address)) {
       context === 'selectInputs'
         ? setRecipientListContext(newRecipient)
         : setRecipientAmountContext(newRecipient);
@@ -221,6 +220,7 @@ const SendToAddress = () => {
         )) as string;
         dispatch(dismissOnGoingProcessModal());
       }
+
       addRecipient({
         type: 'wallet',
         name: walletName || credentials.walletName,
@@ -276,7 +276,7 @@ const SendToAddress = () => {
             }}
           />
           <TouchableOpacity
-            activeOpacity={0.75}
+            activeOpacity={ActiveOpacity}
             onPress={() => {
               haptic('impactLight');
               dispatch(
@@ -347,10 +347,7 @@ const SendToAddress = () => {
             haptic('impactLight');
             goToNextView();
           }}
-          disabled={
-            !recipientList[0] ||
-            (context === 'multisend' && !_.sumBy(recipientList, 'amount'))
-          }>
+          disabled={!recipientList[0]}>
           {t('Continue')}
         </Button>
       </CtaContainer>

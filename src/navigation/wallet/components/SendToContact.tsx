@@ -7,7 +7,7 @@ import {
 } from '../../../components/styled/Containers';
 import Button from '../../../components/button/Button';
 import styled, {useTheme} from 'styled-components/native';
-import {H5, H7, SubText} from '../../../components/styled/Text';
+import {H5, SubText} from '../../../components/styled/Text';
 import {NeutralSlate} from '../../../styles/colors';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {RouteProp} from '@react-navigation/core';
@@ -141,7 +141,7 @@ const SendToContact = () => {
                     onPress={() => {
                       haptic('impactLight');
                       if (
-                        !recipientList.find(r => r.address === item.address)
+                        !recipientList.some(r => r.address === item.address)
                       ) {
                         context === 'selectInputs'
                           ? setRecipientListContext({
@@ -178,10 +178,7 @@ const SendToContact = () => {
               goToConfirmView();
             }
           }}
-          disabled={
-            !recipientList[0] ||
-            (context === 'multisend' && !_.sumBy(recipientList, 'amount'))
-          }>
+          disabled={!recipientList[0]}>
           {t('Continue')}
         </Button>
       </CtaContainer>

@@ -134,20 +134,25 @@ const ImportContainer = styled.SafeAreaView`
   margin-top: 10px;
 `;
 
-export const SendToOptionsContext = React.createContext({
-  recipientList: [] as Recipient[],
+interface SendToOptionsContextProps {
+  recipientList: Recipient[];
   setRecipientListContext: (
     recipient: Recipient,
     removeRecipient?: boolean,
     updateRecipient?: boolean,
     amount?: number,
-  ) => {},
+  ) => void;
   setRecipientAmountContext: (
     recipient: Recipient,
     updateRecipient?: boolean,
-  ) => {},
-  goToConfirmView: () => {},
-});
+  ) => void;
+  goToConfirmView: () => void;
+}
+
+export const SendToOptionsContext =
+  React.createContext<SendToOptionsContextProps>(
+    {} as SendToOptionsContextProps,
+  );
 
 const SendToOptions = () => {
   const {t} = useTranslation();
