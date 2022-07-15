@@ -7,9 +7,8 @@ import {
 } from '../../../components/styled/Containers';
 import Button from '../../../components/button/Button';
 import styled, {useTheme} from 'styled-components/native';
-import {BaseText, H5, H7} from '../../../components/styled/Text';
+import {BaseText, H5, SubText} from '../../../components/styled/Text';
 import {Caution, NeutralSlate} from '../../../styles/colors';
-import {useDispatch} from 'react-redux';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {RouteProp} from '@react-navigation/core';
 import {WalletStackParamList} from '../WalletStack';
@@ -46,13 +45,15 @@ import KeyWalletsRow, {
   KeyWalletsRowProps,
 } from '../../../components/list/KeyWalletsRow';
 import {BuildKeyWalletRow} from '../screens/send/SendTo';
-import {useAppSelector} from '../../../utils/hooks';
+import {useAppDispatch, useAppSelector} from '../../../utils/hooks';
 import _ from 'lodash';
 import {
   RecipientList,
   RecipientRowContainer,
   SendToOptionsContext,
 } from '../screens/SendToOptions';
+import {handleCreateTxProposalError} from '../../../store/wallet/effects/send/send';
+import {sleep} from '../../../utils/helper-methods';
 
 const ValidDataTypes: string[] = [
   'BitcoinAddress',
@@ -83,6 +84,7 @@ const CtaContainer = styled(_CtaContainer)`
 `;
 
 const SendToAddress = () => {
+  const dispatch = useAppDispatch();
   const {t} = useTranslation();
   const theme = useTheme();
   const placeHolderTextColor = theme.dark ? NeutralSlate : '#6F7782';
@@ -90,9 +92,12 @@ const SendToAddress = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const defaultAltCurrency = useAppSelector(({APP}) => APP.defaultAltCurrency);
   const {keys, rates} = useAppSelector(({WALLET}: RootState) => WALLET);
-  const {recipientList, setRecipientListContext} =
-    useContext(SendToOptionsContext);
-  const dispatch = useDispatch();
+  const {
+    recipientList,
+    setRecipientListContext,
+    setRecipientAmountContext,
+    goToConfirmView,
+  } = useContext(SendToOptionsContext);
   const navigation = useNavigation();
   const route = useRoute<RouteProp<WalletStackParamList, 'SendToOptions'>>();
   const {wallet, context} = route.params;
@@ -186,7 +191,9 @@ const SendToAddress = () => {
 
   const addRecipient = (newRecipient: Recipient) => {
     if (!recipientList.find(r => r.address === newRecipient.address)) {
-      setRecipientListContext(newRecipient);
+      context === 'selectInputs'
+        ? setRecipientListContext(newRecipient)
+        : setRecipientAmountContext(newRecipient);
     }
   };
 
@@ -214,7 +221,6 @@ const SendToAddress = () => {
         )) as string;
         dispatch(dismissOnGoingProcessModal());
       }
-
       addRecipient({
         type: 'wallet',
         name: walletName || credentials.walletName,
@@ -227,6 +233,21 @@ const SendToAddress = () => {
     }
   };
 
+  const renderItem = useCallback(
+    ({item}) => {
+      return (
+        <RecipientList
+          recipient={item}
+          wallet={wallet}
+          deleteRecipient={() => setRecipientListContext(item, true)}
+          setAmount={() => setRecipientAmountContext(item, true)}
+          context={context}
+        />
+      );
+    },
+    [wallet],
+  );
+
   const goToNextView = () => {
     if (context === 'selectInputs') {
       navigation.navigate('Wallet', {
@@ -237,22 +258,9 @@ const SendToAddress = () => {
         },
       });
     } else {
-      // TODO
+      goToConfirmView();
     }
   };
-
-  const renderItem = useCallback(
-    ({item}) => {
-      return (
-        <RecipientList
-          recipient={item}
-          wallet={wallet}
-          deleteRecipient={() => setRecipientListContext(item, true)}
-        />
-      );
-    },
-    [wallet],
-  );
 
   return (
     <>
@@ -310,11 +318,11 @@ const SendToAddress = () => {
           ) : (
             <>
               <RecipientRowContainer>
-                <H7>
+                <SubText>
                   {t(
                     'To get started, you’ll need to enter a valid address or select an existing contact or wallet.',
                   )}
-                </H7>
+                </SubText>
               </RecipientRowContainer>
               <Hr />
             </>
@@ -339,7 +347,10 @@ const SendToAddress = () => {
             haptic('impactLight');
             goToNextView();
           }}
-          disabled={!recipientList[0]}>
+          disabled={
+            !recipientList[0] ||
+            (context === 'multisend' && !_.sumBy(recipientList, 'amount'))
+          }>
           {t('Continue')}
         </Button>
       </CtaContainer>

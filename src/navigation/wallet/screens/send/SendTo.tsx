@@ -238,8 +238,8 @@ const SendTo = () => {
     },
   };
 
-  const multipleRecipientOption: Option = {
-    img: <Icons.MultipleRecipients />,
+  const multisendOption: Option = {
+    img: <Icons.Multisend />,
     title: t('Transfer to Multiple Recipients'),
     description: t('Send crypto to multiple contacts or addresses.'),
     onPress: () => {
@@ -248,14 +248,14 @@ const SendTo = () => {
         params: {
           title: t('Multiple Recipients'),
           wallet,
-          context: 'multipleRecipients',
+          context: 'multisend',
         },
       });
     },
   };
 
   const assetOptions: Array<Option> = isUtxo
-    ? [multipleRecipientOption, selectInputOption]
+    ? [multisendOption, selectInputOption]
     : [];
 
   useLayoutEffect(() => {

@@ -283,7 +283,7 @@ const SelectInputs = () => {
   );
 };
 
-const MultipleRecipients = () => {
+const Multisend = () => {
   const theme = useTheme() as BitPayTheme;
   return (
     <Svg.Svg width="17" height="18" viewBox="0 0 17 18" fill="none">
@@ -312,5 +312,5 @@ export default {
   Wallet,
   Network,
   SelectInputs,
-  MultipleRecipients,
+  Multisend,
 };

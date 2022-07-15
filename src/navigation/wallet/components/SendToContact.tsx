@@ -7,7 +7,7 @@ import {
 } from '../../../components/styled/Containers';
 import Button from '../../../components/button/Button';
 import styled, {useTheme} from 'styled-components/native';
-import {H5, H7} from '../../../components/styled/Text';
+import {H5, H7, SubText} from '../../../components/styled/Text';
 import {NeutralSlate} from '../../../styles/colors';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {RouteProp} from '@react-navigation/core';
@@ -29,6 +29,7 @@ import {
   RecipientRowContainer,
   SendToOptionsContext,
 } from '../screens/SendToOptions';
+import _ from 'lodash';
 
 const ScrollViewContainer = styled.ScrollView`
   margin-top: 20px;
@@ -53,8 +54,12 @@ const SendToContact = () => {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<WalletStackParamList, 'SendToOptions'>>();
   const {wallet, context} = route.params;
-  const {recipientList, setRecipientListContext} =
-    useContext(SendToOptionsContext);
+  const {
+    recipientList,
+    setRecipientListContext,
+    setRecipientAmountContext,
+    goToConfirmView,
+  } = useContext(SendToOptionsContext);
   const {
     currencyAbbreviation,
     credentials: {network},
@@ -75,6 +80,8 @@ const SendToContact = () => {
           recipient={item}
           wallet={wallet}
           deleteRecipient={() => setRecipientListContext(item, true)}
+          setAmount={() => setRecipientAmountContext(item, true)}
+          context={context}
         />
       );
     },
@@ -108,11 +115,11 @@ const SendToContact = () => {
           ) : (
             <>
               <RecipientRowContainer>
-                <H7>
+                <SubText>
                   {t(
                     'To get started, you’ll need to enter a valid address or select an existing contact or wallet.',
                   )}
-                </H7>
+                </SubText>
               </RecipientRowContainer>
               <Hr />
             </>
@@ -136,7 +143,15 @@ const SendToContact = () => {
                       if (
                         !recipientList.find(r => r.address === item.address)
                       ) {
-                        setRecipientListContext({...item, type: 'contact'});
+                        context === 'selectInputs'
+                          ? setRecipientListContext({
+                              ...item,
+                              type: 'contact',
+                            })
+                          : setRecipientAmountContext({
+                              ...item,
+                              type: 'contact',
+                            });
                       }
                     }}
                   />
@@ -160,10 +175,13 @@ const SendToContact = () => {
                 },
               });
             } else {
-              // TODO
+              goToConfirmView();
             }
           }}
-          disabled={!recipientList[0]}>
+          disabled={
+            !recipientList[0] ||
+            (context === 'multisend' && !_.sumBy(recipientList, 'amount'))
+          }>
           {t('Continue')}
         </Button>
       </CtaContainer>

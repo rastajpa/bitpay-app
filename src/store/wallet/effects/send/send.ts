@@ -114,7 +114,7 @@ export const createProposalAndBuildTxDetails =
 
         if (
           currencyAbbreviation === 'xrp' &&
-          wallet.receiveAddress === recipient.address
+          wallet.receiveAddress === recipient?.address
         ) {
           return reject({
             err: new Error(
@@ -145,7 +145,7 @@ export const createProposalAndBuildTxDetails =
               context,
               currency: currencyAbbreviation,
               tokenAddress: token ? token.address : null,
-              toAddress: recipient.address,
+              toAddress: recipient?.address,
               amount: formattedAmount.amountSat,
               network: credentials.network,
               payProUrl,
@@ -156,6 +156,7 @@ export const createProposalAndBuildTxDetails =
           )),
           dryRun,
         } as Partial<TransactionProposal>;
+        console.log('-----||txp', txp);
 
         wallet.createTxProposal(
           txp,
@@ -340,7 +341,7 @@ export const buildTxDetails =
     rates: Rates;
     defaultAltCurrencyIsoCode: string;
     wallet: Wallet | WalletRowProps;
-    recipient?: Recipient;
+    recipient: Recipient;
     invoice?: Invoice;
     context?: TransactionOptionsContext;
     feeLevel?: string;
@@ -474,6 +475,7 @@ const buildTransactionProposal =
           sendMax,
           wallet,
           inputs,
+          recipientList,
         } = tx;
         let {customData} = tx;
 
@@ -488,10 +490,12 @@ const buildTransactionProposal =
             };
           }
         }
+
+        const chain = dispatch(GetChain(currency!)).toLowerCase();
         // base tx
         const txp: Partial<TransactionProposal> = {
           coin: currency,
-          chain: dispatch(GetChain(currency!)).toLowerCase(),
+          chain,
           customData,
           feePerKb,
           ...(!feePerKb && {feeLevel}),
@@ -499,7 +503,7 @@ const buildTransactionProposal =
           message,
         };
         // currency specific
-        switch (dispatch(GetChain(currency!)).toLowerCase()) {
+        switch (chain) {
           case 'btc':
             txp.enableRBF = tx.enableRBF;
             txp.replaceTxByFee = tx.replaceTxByFee;
@@ -515,7 +519,9 @@ const buildTransactionProposal =
             txp.destinationTag = tx.destinationTag;
             break;
           case 'bch':
-            tx.toAddress = ToCashAddress(tx.toAddress!, false);
+            tx.toAddress = recipientList
+              ? ToCashAddress(tx.toAddress!, false)
+              : undefined;
             break;
         }
 
@@ -549,6 +555,22 @@ const buildTransactionProposal =
         txp.outputs = [];
         switch (context) {
           case 'multisend':
+            if (recipientList) {
+              recipientList.forEach(r => {
+                const formattedAmount = dispatch(
+                  ParseAmount(r.amount || 0, chain),
+                );
+                txp.outputs?.push({
+                  toAddress:
+                    chain === 'bch'
+                      ? ToCashAddress(tx.toAddress!, false)
+                      : r.address,
+                  amount: formattedAmount.amountSat,
+                  message: tx.description,
+                  data: tx.data,
+                });
+              });
+            }
             break;
           case 'paypro':
             txp.payProUrl = payProUrl;
