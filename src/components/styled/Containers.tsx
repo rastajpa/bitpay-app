@@ -111,6 +111,7 @@ export const CurrencyImageContainer = styled.View`
   justify-content: center;
   align-self: center;
   border-radius: 8px;
+  position: relative;
 `;
 
 // Card

@@ -4,7 +4,7 @@ import {useTheme, useNavigation, useRoute} from '@react-navigation/native';
 import {RouteProp} from '@react-navigation/core';
 import cloneDeep from 'lodash.clonedeep';
 import {SupportedCurrencyOptions} from '../../../../constants/SupportedCurrencyOptions';
-import {Currencies} from '../../../../constants/currencies';
+import {BitpaySupportedCoins} from '../../../../constants/currencies';
 import {
   Action,
   SlateDark,
@@ -73,6 +73,7 @@ export interface RateData {
 
 export interface swapCryptoCoin {
   currencyAbbreviation: string;
+  chain: string;
   name: string;
   protocol?: string;
   logoUri?: any;
@@ -113,9 +114,11 @@ const SwapCryptoRoot: React.FC = () => {
   const [sendMaxInfo, setSendMaxInfo] = useState<SendMaxInfo | undefined>();
 
   const selectedWallet = route.params?.selectedWallet;
-  const SupportedCurrencies: string[] = Object.keys(Currencies);
+  const SupportedCurrencies: string[] = Object.keys(BitpaySupportedCoins);
   const SupportedChains: string[] = [
-    ...new Set(Object.values(Currencies).map(({chain}: any) => chain)),
+    ...new Set(
+      Object.values(BitpaySupportedCoins).map(({chain}: any) => chain),
+    ),
   ];
   let minAmount: number, maxAmount: number;
 
@@ -236,6 +239,7 @@ const SwapCryptoRoot: React.FC = () => {
         SatToUnit(
           fromWalletSelected.balance.satSpendable,
           fromWalletSelected.currencyAbbreviation,
+          fromWalletSelected.credentials.chain,
         ),
       );
 
@@ -425,6 +429,7 @@ const SwapCryptoRoot: React.FC = () => {
               const warningMsg = dispatch(
                 GetExcludedUtxosMessage(
                   fromWalletSelected.currencyAbbreviation,
+                  fromWalletSelected.credentials.chain,
                   sendMaxInfo,
                 ),
               );
@@ -435,6 +440,7 @@ const SwapCryptoRoot: React.FC = () => {
               SatToUnit(
                 sendMaxInfo.fee,
                 fromWalletSelected.currencyAbbreviation,
+                fromWalletSelected.credentials.chain,
               ),
             );
             const coin = fromWalletSelected.currencyAbbreviation.toUpperCase();
@@ -593,7 +599,7 @@ const SwapCryptoRoot: React.FC = () => {
     };
     if (
       !!toWalletSelected &&
-      dispatch(IsERCToken(toWalletSelected.currencyAbbreviation))
+      IsERCToken(toWalletSelected.currencyAbbreviation)
     ) {
       tokensWarn();
     } else {
@@ -619,8 +625,8 @@ const SwapCryptoRoot: React.FC = () => {
         toWalletData: toWalletData!,
         fixedRateId: rateData!.fixedRateId,
         amountFrom: amountFrom,
-        useSendMax: dispatch(
-          IsERCToken(fromWalletSelected!.currencyAbbreviation.toLowerCase()),
+        useSendMax: IsERCToken(
+          fromWalletSelected!.currencyAbbreviation.toLowerCase(),
         )
           ? false
           : useSendMax,
@@ -981,6 +987,7 @@ const SwapCryptoRoot: React.FC = () => {
       <AmountModal
         isVisible={amountModalVisible}
         cryptoCurrencyAbbreviation={fromWalletData?.currencyAbbreviation.toUpperCase()}
+        chain={fromWalletData?.credentials.chain}
         onClose={() => hideModal('amount')}
         onSubmit={newAmount => {
           hideModal('amount');
@@ -998,9 +1005,7 @@ const SwapCryptoRoot: React.FC = () => {
           let newAmount: number | undefined;
 
           if (
-            dispatch(
-              IsERCToken(fromWalletSelected.currencyAbbreviation.toLowerCase()),
-            )
+            IsERCToken(fromWalletSelected.currencyAbbreviation.toLowerCase())
           ) {
             setUseSendMax(true);
             setSendMaxInfo(undefined);
@@ -1014,6 +1019,7 @@ const SwapCryptoRoot: React.FC = () => {
                 SatToUnit(
                   data.amount,
                   fromWalletSelected.currencyAbbreviation.toLowerCase(),
+                  fromWalletSelected.credentials.chain,
                 ),
               );
             }

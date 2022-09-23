@@ -47,10 +47,9 @@ import NetworkSelectionRow, {
 import {LightBlack, NeutralSlate, Slate} from '../../../../styles/colors';
 import {CurrencyImage} from '../../../../components/currency-image/CurrencyImage';
 import WalletIcons from '../../../wallet/components/WalletIcons';
-import {SUPPORTED_CURRENCIES} from '../../../../constants/currencies';
+import {SUPPORTED_ETHEREUM_TOKENS} from '../../../../constants/currencies';
 import {BitpaySupportedTokenOpts} from '../../../../constants/tokens';
 import {useAppDispatch, useAppSelector} from '../../../../utils/hooks';
-import {GetChain} from '../../../../store/wallet/utils/currency';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import debounce from 'lodash.debounce';
 import {useTranslation} from 'react-i18next';
@@ -184,11 +183,13 @@ const ContactsAdd = ({
     };
   });
 
-  const ALL_CUSTOM_TOKENS = useMemo(
+  // TODO MATIC
+  const ALL_CUSTOM_ETHEREUM_TOKENS = useMemo(
     () =>
       Object.values(tokenOptions)
         .filter(
-          token => !SUPPORTED_CURRENCIES.includes(token.symbol.toLowerCase()),
+          token =>
+            !SUPPORTED_ETHEREUM_TOKENS.includes(token.symbol.toLowerCase()),
         )
         .map(({symbol, name, logoURI}) => {
           return {
@@ -203,19 +204,9 @@ const ContactsAdd = ({
     [tokenOptions],
   );
 
-  const ALL_CURRENCIES = useMemo(
-    () => [...SupportedCurrencyOptions, ...ALL_CUSTOM_TOKENS],
-    [ALL_CUSTOM_TOKENS],
-  );
-
   const ETH_CHAIN_CURRENCIES = useMemo(
-    () =>
-      ALL_CURRENCIES.filter(
-        currency =>
-          dispatch(GetChain(currency.currencyAbbreviation)).toLowerCase() ===
-          'eth',
-      ),
-    [ALL_CURRENCIES, dispatch],
+    () => [...SUPPORTED_ETHEREUM_TOKENS, ...ALL_CUSTOM_ETHEREUM_TOKENS],
+    [ALL_CUSTOM_ETHEREUM_TOKENS],
   );
 
   const [ethCurrencyOptions, setEthCurrencyOptions] = useState<Array<any>>([

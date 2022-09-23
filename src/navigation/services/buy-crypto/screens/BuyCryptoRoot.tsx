@@ -290,10 +290,7 @@ const BuyCryptoRoot: React.FC<
       await sleep(600);
       showTokensInfoSheet();
     };
-    if (
-      !!selectedWallet &&
-      dispatch(IsERCToken(selectedWallet.currencyAbbreviation))
-    ) {
+    if (!!selectedWallet && IsERCToken(selectedWallet.currencyAbbreviation)) {
       tokensWarn();
     } else {
       continueToViewOffers();
@@ -314,6 +311,7 @@ const BuyCryptoRoot: React.FC<
       amount,
       fiatCurrency,
       coin: selectedWallet?.currencyAbbreviation || '',
+      chain: selectedWallet?.credentials.chain || '',
       country: countryData?.shortCode || 'US',
       selectedWallet,
       paymentMethod: selectedPaymentMethod,

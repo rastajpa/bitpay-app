@@ -47,6 +47,7 @@ const ContactIcon: React.FC<ContactIconProps> = ({coin, size = 50, name}) => {
       ...WALLET.customTokenOptions,
     };
   });
+  // TODO MATIC
   const img = SUPPORTED_CURRENCIES.includes(coin)
     ? CurrencyListIcons[coin]
     : tokenOptions && tokenOptions[coin]?.logoURI

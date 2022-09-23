@@ -2,6 +2,7 @@ import React, {ReactElement} from 'react';
 import BtcIcon from '../../assets/img/currencies/btc.svg';
 import BchIcon from '../../assets/img/currencies/bch.svg';
 import EthIcon from '../../assets/img/currencies/eth.svg';
+// import MaticIcon from '../../assets/img/currencies/eth.svg';
 import DogeIcon from '../../assets/img/currencies/doge.svg';
 import LtcIcon from '../../assets/img/currencies/ltc.svg';
 import XrpIcon from '../../assets/img/currencies/xrp.svg';
@@ -32,6 +33,7 @@ export const CurrencyListIcons: {
   btc: props => <BtcIcon {...props} />,
   bch: props => <BchIcon {...props} />,
   eth: props => <EthIcon {...props} />,
+  // matic: props => <MaticIcon {...props} />,
   doge: props => <DogeIcon {...props} />,
   ltc: props => <LtcIcon {...props} />,
   xrp: props => <XrpIcon {...props} />,
@@ -71,6 +73,14 @@ export const SupportedCurrencyOptions: Array<SupportedCurrencyOption> = [
     hasMultisig: false, // TODO
     imgSrc: require('../../assets/img/currencies/png/ETH.png'),
   },
+  // {
+  //   id: 'matic',
+  //   img: CurrencyListIcons.matic,
+  //   currencyName: 'Matic',
+  //   currencyAbbreviation: 'MATIC',
+  //   hasMultisig: false, // TODO
+  //   imgSrc: require('../../assets/img/currencies/png/ETH.png'),
+  // },
   {
     id: 'doge',
     img: CurrencyListIcons.doge,
@@ -94,6 +104,9 @@ export const SupportedCurrencyOptions: Array<SupportedCurrencyOption> = [
     currencyAbbreviation: 'XRP',
     imgSrc: require('../../assets/img/currencies/png/XRP.png'),
   },
+];
+
+export const SupportedTokenOptions: Array<SupportedCurrencyOption> = [
   {
     id: 'usdc',
     img: CurrencyListIcons.usdc,

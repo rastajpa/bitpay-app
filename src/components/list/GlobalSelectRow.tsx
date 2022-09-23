@@ -12,6 +12,8 @@ import styled from 'styled-components/native';
 import {LightBlack, NeutralSlate} from '../../styles/colors';
 import AngleRightSvg from '../../../assets/img/angle-right.svg';
 import {useTranslation} from 'react-i18next';
+import EthIcon from '../../../assets/img/currencies/eth.svg';
+import { IsERCToken } from '../../store/wallet/utils/currency';
 
 interface Props {
   item: GlobalSelectObj;
@@ -27,14 +29,25 @@ export const AvailableWalletsPill = styled.View`
   padding: 10px;
   margin-right: 10px;
 `;
+const ChainImageContainer = styled.View`
+  position: absolute;
+  right: 5px;
+  bottom: 0px;
+`;
 
 const GlobalSelectRow = ({item, emit}: Props) => {
   const {t} = useTranslation();
-  const {currencyName, total, img} = item;
+  const {currencyName, currencyAbbreviation, total, img, chain} = item;
+
   return (
     <RowContainer activeOpacity={ActiveOpacity} onPress={() => emit(item)}>
       <CurrencyImageContainer>
-        <CurrencyImage img={img} />
+        <CurrencyImage img={img}/>
+       <ChainImageContainer>
+       {chain === 'eth' && IsERCToken(currencyAbbreviation) && 
+         <EthIcon width={25} height={25} /> 
+        }
+       </ChainImageContainer>
       </CurrencyImageContainer>
       <CurrencyColumn>
         <H5>{currencyName}</H5>
