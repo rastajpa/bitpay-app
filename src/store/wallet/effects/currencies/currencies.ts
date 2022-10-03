@@ -137,7 +137,6 @@ const populateTokenInfo = ({
       isCustom: true,
     },
     paymentInfo: {
-      // TODO MATIC
       paymentCode: 'EIP681b',
       protocolPrefix: {livenet: chain, testnet: chain},
       ratesApi: '',

@@ -14,6 +14,7 @@ import WbtcIcon from '../../assets/img/currencies/wbtc.svg';
 import ShibIcon from '../../assets/img/currencies/shib.svg';
 import ApeIcon from '../../assets/img/currencies/ape.svg';
 import EurocIcon from '../../assets/img/currencies/euroc.svg';
+import MaticIcon from '../../assets/img/currencies/matic.svg';
 import {ImageSourcePropType} from 'react-native';
 
 export interface SupportedCurrencyOption {
@@ -34,7 +35,7 @@ export const CurrencyListIcons: {
   btc: props => <BtcIcon {...props} />,
   bch: props => <BchIcon {...props} />,
   eth: props => <EthIcon {...props} />,
-  matic: props => <EthIcon {...props} />, // TODO MATIC
+  matic: props => <MaticIcon {...props} />,
   doge: props => <DogeIcon {...props} />,
   ltc: props => <LtcIcon {...props} />,
   xrp: props => <XrpIcon {...props} />,
@@ -53,7 +54,7 @@ export const CurrencyListIcons: {
   wbtc_m: props => <WbtcIcon {...props} />,
   shib_m: props => <ShibIcon {...props} />,
   ape_m: props => <ApeIcon {...props} />,
-  matic_m: props => <EthIcon {...props} />, // TODO MATIC
+  matic_m: props => <MaticIcon {...props} />,
 };
 
 export const SupportedUtxoCurrencyOptions: Array<SupportedCurrencyOption> = [
@@ -109,11 +110,11 @@ export const SupportedEvmCurrencyOptions: Array<SupportedCurrencyOption> = [
   },
   {
     id: Math.random().toString(),
-    img: CurrencyListIcons.eth,
+    img: CurrencyListIcons.matic,
     currencyName: 'Matic',
     currencyAbbreviation: 'matic',
     hasMultisig: false,
-    imgSrc: require('../../assets/img/currencies/png/ETH.png'), // TODO MATIC
+    imgSrc: require('../../assets/img/currencies/png/MATIC.png'),
   },
 ];
 
@@ -215,8 +216,8 @@ export const SupportedTokenOptions: Array<SupportedCurrencyOption> = [
     currencyAbbreviation: 'usdc',
     isToken: true,
     imgSrc: require('../../assets/img/currencies/png/USDC.png'),
-    badgeSrc: require('../../assets/img/currencies/png/ETH.png'),
-    badgeUri: CurrencyListIcons.eth,
+    badgeSrc: require('../../assets/img/currencies/png/MATIC.png'),
+    badgeUri: CurrencyListIcons.matic,
   },
   {
     id: Math.random().toString(),
@@ -225,8 +226,8 @@ export const SupportedTokenOptions: Array<SupportedCurrencyOption> = [
     currencyAbbreviation: 'ape',
     isToken: true,
     imgSrc: require('../../assets/img/currencies/png/APE.png'),
-    badgeSrc: require('../../assets/img/currencies/png/ETH.png'),
-    badgeUri: CurrencyListIcons.eth,
+    badgeSrc: require('../../assets/img/currencies/png/MATIC.png'),
+    badgeUri: CurrencyListIcons.matic,
   },
   {
     id: Math.random().toString(),
@@ -235,8 +236,8 @@ export const SupportedTokenOptions: Array<SupportedCurrencyOption> = [
     currencyAbbreviation: 'euroc',
     isToken: true,
     imgSrc: require('../../assets/img/currencies/png/EUROC.png'),
-    badgeSrc: require('../../assets/img/currencies/png/ETH.png'),
-    badgeUri: CurrencyListIcons.eth,
+    badgeSrc: require('../../assets/img/currencies/png/MATIC.png'),
+    badgeUri: CurrencyListIcons.matic,
   },
   {
     id: Math.random().toString(),
@@ -245,8 +246,8 @@ export const SupportedTokenOptions: Array<SupportedCurrencyOption> = [
     currencyAbbreviation: 'shib',
     isToken: true,
     imgSrc: require('../../assets/img/currencies/png/SHIB.png'),
-    badgeSrc: require('../../assets/img/currencies/png/ETH.png'),
-    badgeUri: CurrencyListIcons.eth,
+    badgeSrc: require('../../assets/img/currencies/png/MATIC.png'),
+    badgeUri: CurrencyListIcons.matic,
   },
   {
     id: Math.random().toString(),
@@ -255,8 +256,8 @@ export const SupportedTokenOptions: Array<SupportedCurrencyOption> = [
     currencyAbbreviation: 'gusd',
     isToken: true,
     imgSrc: require('../../assets/img/currencies/png/GUSD.png'),
-    badgeSrc: require('../../assets/img/currencies/png/ETH.png'),
-    badgeUri: CurrencyListIcons.eth,
+    badgeSrc: require('../../assets/img/currencies/png/MATIC.png'),
+    badgeUri: CurrencyListIcons.matic,
   },
   {
     id: Math.random().toString(),
@@ -265,8 +266,8 @@ export const SupportedTokenOptions: Array<SupportedCurrencyOption> = [
     currencyAbbreviation: 'busd',
     isToken: true,
     imgSrc: require('../../assets/img/currencies/png/BUSD.png'),
-    badgeSrc: require('../../assets/img/currencies/png/ETH.png'),
-    badgeUri: CurrencyListIcons.eth,
+    badgeSrc: require('../../assets/img/currencies/png/MATIC.png'),
+    badgeUri: CurrencyListIcons.matic,
   },
   {
     id: Math.random().toString(),
@@ -275,8 +276,8 @@ export const SupportedTokenOptions: Array<SupportedCurrencyOption> = [
     currencyAbbreviation: 'dai',
     isToken: true,
     imgSrc: require('../../assets/img/currencies/png/DAI.png'),
-    badgeSrc: require('../../assets/img/currencies/png/ETH.png'),
-    badgeUri: CurrencyListIcons.eth,
+    badgeSrc: require('../../assets/img/currencies/png/MATIC.png'),
+    badgeUri: CurrencyListIcons.matic,
   },
   {
     id: Math.random().toString(),
@@ -285,8 +286,8 @@ export const SupportedTokenOptions: Array<SupportedCurrencyOption> = [
     currencyAbbreviation: 'wbtc',
     isToken: true,
     imgSrc: require('../../assets/img/currencies/png/WBTC.png'),
-    badgeSrc: require('../../assets/img/currencies/png/ETH.png'),
-    badgeUri: CurrencyListIcons.eth,
+    badgeSrc: require('../../assets/img/currencies/png/MATIC.png'),
+    badgeUri: CurrencyListIcons.matic,
   },
   {
     id: Math.random().toString(),
@@ -294,9 +295,9 @@ export const SupportedTokenOptions: Array<SupportedCurrencyOption> = [
     currencyName: 'Matic Token',
     currencyAbbreviation: 'matic',
     isToken: true,
-    imgSrc: require('../../assets/img/currencies/png/ETH.png'),
-    badgeSrc: require('../../assets/img/currencies/png/ETH.png'),
-    badgeUri: CurrencyListIcons.eth,
+    imgSrc: require('../../assets/img/currencies/png/MATIC.png'),
+    badgeSrc: require('../../assets/img/currencies/png/MATIC.png'),
+    badgeUri: CurrencyListIcons.matic,
   },
 ];
 
