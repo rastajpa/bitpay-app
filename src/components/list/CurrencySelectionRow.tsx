@@ -149,7 +149,7 @@ interface TokenSelectionRowProps {
   token: CurrencySelectionItem;
   hideCheckbox?: boolean;
   selectionMode?: CurrencySelectionMode;
-  onToggle?: (currencyAbbreviation: string) => any;
+  onToggle?: (currencyAbbreviation: string, chain?: string) => any;
   hideArrow?: boolean;
   badgeUri?: string | ((props?: any) => ReactElement);
 }
@@ -170,7 +170,7 @@ export const TokenSelectionRow: React.VFC<TokenSelectionRowProps> = memo(
     return (
       <FlexRow
         style={{marginBottom: 24}}
-        onPress={() => onToggle?.(token.currencyAbbreviation)}>
+        onPress={() => onToggle?.(token.currencyAbbreviation, token.chain)}>
         {!hideArrow ? (
           <CurrencyColumn style={{marginRight: 16}}>
             <NestedArrowIcon />
@@ -199,7 +199,9 @@ export const TokenSelectionRow: React.VFC<TokenSelectionRowProps> = memo(
               checked={!!token.selected}
               radio={selectionMode === 'single'}
               disabled={!!token.disabled}
-              onPress={() => onToggle?.(token.currencyAbbreviation)}
+              onPress={() =>
+                onToggle?.(token.currencyAbbreviation, token.chain)
+              }
             />
           </CurrencyColumn>
         ) : null}
