@@ -39,7 +39,7 @@ export type CurrencyTokenSelectionScreenParamList = {
   description?: string;
   hideCheckbox?: boolean;
   selectionMode?: CurrencySelectionMode;
-  onToggle: (id: string) => any;
+  onToggle: (id: string, chain: string) => any;
 };
 
 const SearchContainerLinkRow = styled.View`

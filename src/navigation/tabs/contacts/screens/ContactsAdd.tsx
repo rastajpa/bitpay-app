@@ -54,8 +54,12 @@ import NetworkSelectionRow, {
 import {LightBlack, NeutralSlate, Slate} from '../../../../styles/colors';
 import {CurrencyImage} from '../../../../components/currency-image/CurrencyImage';
 import WalletIcons from '../../../wallet/components/WalletIcons';
-import {SUPPORTED_ETHEREUM_TOKENS} from '../../../../constants/currencies';
-import {BitpaySupportedEthereumTokenOpts} from '../../../../constants/tokens';
+import {
+  BitpaySupportedMaticTokens,
+  SUPPORTED_ETHEREUM_TOKENS,
+  SUPPORTED_TOKENS,
+} from '../../../../constants/currencies';
+import {BitpaySupportedTokenOpts} from '../../../../constants/tokens';
 import {useAppDispatch, useAppSelector} from '../../../../utils/hooks';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import debounce from 'lodash.debounce';
@@ -210,24 +214,30 @@ const ContactsAdd = ({
     IsERCToken(contact?.coin || ''),
   );
 
-  const ethereumTokenOptions = useAppSelector(({WALLET}: RootState) => {
+  const tokenOptions = useAppSelector(({WALLET}: RootState) => {
     return {
-      ...BitpaySupportedEthereumTokenOpts,
+      ...BitpaySupportedTokenOpts,
       ...WALLET.tokenOptions,
       ...WALLET.customTokenOptions,
     };
   });
 
-  const ALL_CUSTOM_ETHEREUM_TOKENS = useMemo(() => {
-    const chain = 'eth';
-    return Object.values(ethereumTokenOptions)
+  const ALL_CUSTOM_TOKENS = useMemo(() => {
+    return Object.values(tokenOptions)
       .filter(
         token =>
-          !SUPPORTED_ETHEREUM_TOKENS.includes(
-            getCurrencyAbbreviation(token.symbol.toLowerCase(), chain),
+          !SUPPORTED_TOKENS.includes(
+            getCurrencyAbbreviation(
+              token.symbol.toLowerCase(),
+              token.symbol.charAt(token.symbol.length - 1) === 'e'
+                ? 'eth'
+                : 'matic',
+            ),
           ),
       )
       .map(({symbol, name, logoURI}) => {
+        const chain =
+          symbol.charAt(symbol.length - 1) === 'e' ? 'eth' : 'matic';
         return {
           id: Math.random().toString(),
           coin: symbol.toLowerCase(),
@@ -239,16 +249,16 @@ const ContactsAdd = ({
           badgeUri: getBadgeImg(symbol.toLowerCase(), chain),
         } as SupportedCurrencyOption;
       });
-  }, [ethereumTokenOptions]);
+  }, [tokenOptions]);
 
-  const ALL_ETHEREUM_TOKENS = useMemo(
-    () => [...SupportedTokenOptions, ...ALL_CUSTOM_ETHEREUM_TOKENS],
-    [ALL_CUSTOM_ETHEREUM_TOKENS],
+  const ALL_TOKENS = useMemo(
+    () => [...SupportedTokenOptions, ...ALL_CUSTOM_TOKENS],
+    [ALL_CUSTOM_TOKENS],
   );
 
-  const [ethTokenOptions, setEthTokenOptions] = useState(ALL_ETHEREUM_TOKENS);
+  const [allTokenOptions, setAllTokenOptions] = useState(ALL_TOKENS);
 
-  const [selectedToken, setSelectedToken] = useState(ALL_ETHEREUM_TOKENS[0]);
+  const [selectedToken, setSelectedToken] = useState(ALL_TOKENS[0]);
   const [selectedCurrency, setSelectedCurrency] = useState(
     SupportedEvmCurrencyOptions[0],
   );
@@ -274,17 +284,17 @@ const ContactsAdd = ({
         let _searchList: Array<any> = [];
         if (search) {
           search = search.toLowerCase();
-          _searchList = ethTokenOptions.filter(
+          _searchList = allTokenOptions.filter(
             ({currencyAbbreviation, currencyName}) =>
               currencyAbbreviation.toLowerCase().includes(search) ||
               currencyName.toLowerCase().includes(search),
           );
         } else {
-          _searchList = ethTokenOptions;
+          _searchList = allTokenOptions;
         }
-        setEthTokenOptions(_searchList);
+        setAllTokenOptions(_searchList);
       }, 300),
-    [ethTokenOptions],
+    [allTokenOptions],
   );
 
   const setValidValues = (
@@ -412,10 +422,10 @@ const ContactsAdd = ({
   });
 
   const _setSelectedToken = (currencyAbbreviation: string) => {
-    const _selectedToken = ethTokenOptions.find(
+    const _selectedToken = allTokenOptions.find(
       token => token.currencyAbbreviation === currencyAbbreviation,
     );
-    setSelectedToken(_selectedToken || ethTokenOptions[0]);
+    setSelectedToken(_selectedToken || allTokenOptions[0]);
   };
 
   const _setSelectedCurrency = (currencyAbbreviation: string) => {

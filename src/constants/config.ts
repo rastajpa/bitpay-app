@@ -43,21 +43,23 @@ export const DOWNLOAD_BITPAY_URL = 'https://bitpay.com/wallet';
 export const TWO_FACTOR_EMAIL_POLL_INTERVAL = 1000 * 3;
 export const TWO_FACTOR_EMAIL_POLL_TIMEOUT = 1000 * 60 * 5;
 
-// Coingecko
-export const COINGECKO_BLOCKCHAIN_NETWORK = {
+export const EVM_BLOCKCHAIN_NETWORK = {
   eth: 'ethereum',
+  matic: 'polygon-pos',
 };
 
-// 1Inch
-export const ONEINCH_BLOCKCHAIN_ID: {[key in string]: number} = {
+export const EVM_BLOCKCHAIN_ID: {[key in string]: number} = {
   eth: 1,
-  // TODO MATIC
-  // matic: 137,
+  matic: 137,
 };
 
 export const EVM_BLOCKCHAIN_EXPLORERS: {[key in string]: any} = {
   eth: {
     [Network.mainnet]: 'etherscan.io/',
     [Network.testnet]: 'kovan.etherscan.io/',
+  },
+  matic: {
+    [Network.mainnet]: 'polygonscan.com/',
+    [Network.testnet]: 'mumbai.polygonscan.com/',
   },
 };

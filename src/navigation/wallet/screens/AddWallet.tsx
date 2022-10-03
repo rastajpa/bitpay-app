@@ -337,6 +337,7 @@ const AddWallet: React.FC<AddWalletScreenProps> = ({navigation, route}) => {
       );
 
       // adds wallet and binds to key obj - creates eth wallet if needed
+      console.log('$$$$$$$$$$$$$$$$$$$$$$$$44chain', chain);
       const wallet = await dispatch(
         addWallet({
           key,

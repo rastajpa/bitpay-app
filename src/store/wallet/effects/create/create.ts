@@ -1,6 +1,7 @@
 import {
   BitpaySupportedCoins,
   SupportedCoins,
+  SUPPORTED_EVM_COINS,
 } from '../../../../constants/currencies';
 import {Effect} from '../../../index';
 import {Credentials} from 'bitcore-wallet-client/ts_build/lib/credentials';
@@ -20,7 +21,7 @@ import {
 import API from 'bitcore-wallet-client/ts_build';
 import {Key, KeyMethods, KeyOptions, Token, Wallet} from '../../wallet.models';
 import {Network} from '../../../../constants';
-import {BitpaySupportedEthereumTokenOpts} from '../../../../constants/tokens';
+import {BitpaySupportedTokenOpts} from '../../../../constants/tokens';
 import {
   subscribeEmailNotifications,
   subscribePushNotifications,
@@ -32,6 +33,7 @@ import {
 import {getCurrencyAbbreviation, sleep} from '../../../../utils/helper-methods';
 import {t} from 'i18next';
 import {LogActions} from '../../../log';
+import {IsERCToken} from '../../utils/currency';
 
 export interface CreateOptions {
   network?: Network;
@@ -119,7 +121,7 @@ export const addWallet =
           WALLET,
         } = getState();
         const tokenOpts = {
-          ...BitpaySupportedEthereumTokenOpts,
+          ...BitpaySupportedTokenOpts,
           ...WALLET.tokenOptions,
           ...WALLET.customTokenOptions,
         };
@@ -251,13 +253,16 @@ const createMultipleWallets =
       },
     } = getState();
     const tokenOpts = {
-      ...BitpaySupportedEthereumTokenOpts,
+      ...BitpaySupportedTokenOpts,
       ...WALLET.tokenOptions,
       ...WALLET.customTokenOptions,
     };
     const wallets: API[] = [];
     const tokens = currencies.filter(({isToken}) => isToken);
     const coins = currencies.filter(({isToken}) => !isToken);
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$coins", coins);
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$tokens", tokens);
+
     for (const coin of coins) {
       const wallet = (await createWallet({
         key,
@@ -268,8 +273,10 @@ const createMultipleWallets =
         },
       })) as Wallet;
       wallets.push(wallet);
-
-      if (coin.chain === 'eth') {
+      if (
+        IsERCToken(coin.currencyAbbreviation) &&
+        SUPPORTED_EVM_COINS.includes(coin.chain)
+      ) {
         for (const token of tokens) {
           wallet.preferences = wallet.preferences || {
             tokenAddresses: [],
@@ -354,6 +361,7 @@ const createWallet = (params: {
     );
 
     const name = BitpaySupportedCoins[coin.toLowerCase()].name;
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$4coin", coin);
     bwcClient.createWallet(
       name,
       'me',

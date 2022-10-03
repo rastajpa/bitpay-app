@@ -18,7 +18,10 @@ import CurrencySelectionRow, {
 } from '../../../components/list/CurrencySelectionRow';
 
 import Button from '../../../components/button/Button';
-import {BitpaySupportedCurrencies} from '../../../constants/currencies';
+import {
+  BitpaySupportedCurrencies,
+  BitpaySupportedTokens,
+} from '../../../constants/currencies';
 import {startCreateKey} from '../../../store/wallet/effects';
 import {
   FlatList,
@@ -51,7 +54,7 @@ import {StackScreenProps} from '@react-navigation/stack';
 import {getCurrencyAbbreviation, sleep} from '../../../utils/helper-methods';
 import {useLogger} from '../../../utils/hooks/useLogger';
 import {useAppSelector, useAppDispatch} from '../../../utils/hooks';
-import {BitpaySupportedEthereumTokenOpts} from '../../../constants/tokens';
+import {BitpaySupportedTokenOpts} from '../../../constants/tokens';
 import {useTranslation} from 'react-i18next';
 import CurrencySelectionSearchInput from '../components/CurrencySelectionSearchInput';
 import CurrencySelectionNoResults from '../components/CurrencySelectionNoResults';
@@ -122,6 +125,7 @@ const DESCRIPTIONS: Record<string, string> = {
 
 const POPULAR_TOKENS: Record<string, string[]> = {
   eth: ['usdc', 'busd', 'ape'],
+  matic: ['usdc', 'busd', 'ape'],
 };
 
 const keyExtractor = (item: CurrencySelectionListItem) => item.currency.id;
@@ -239,12 +243,13 @@ const CurrencySelection: React.VFC<CurrencySelectionScreenProps> = ({
     );
 
     // For each token, add it to the token list for its parent chain object
-    const ethereumTokenOptions: Record<string, Token> = {
-      ...BitpaySupportedEthereumTokenOpts,
+    const tokenOptions: Record<string, Token> = {
+      ...BitpaySupportedTokenOpts,
       ...appTokenOptions,
       ...appCustomTokenOptions,
     };
-    Object.entries(ethereumTokenOptions).forEach(([k, tokenOpt]) => {
+
+    Object.entries(tokenOptions).forEach(([k, tokenOpt]) => {
       if (
         !(
           BitpaySupportedCurrencies[k] ||
@@ -522,13 +527,16 @@ const CurrencySelection: React.VFC<CurrencySelectionScreenProps> = ({
     });
   }, [navigation, t, context, headerTitle]);
 
-  const onToggle = (currencyAbbreviation: string) => {
+  const onToggle = (currencyAbbreviation: string, chain: string) => {
     setAllListItems(previous =>
       previous.map(item => {
         const isCurrencyMatch =
-          item.currency.currencyAbbreviation === currencyAbbreviation;
+          item.currency.currencyAbbreviation === currencyAbbreviation &&
+          item.currency.chain === chain;
         const tokenMatch = item.tokens.find(
-          token => token.currencyAbbreviation === currencyAbbreviation,
+          token =>
+            token.currencyAbbreviation === currencyAbbreviation &&
+            item.currency.chain === chain,
         );
 
         // if multi, just toggle the selected item and rerender
@@ -668,9 +676,12 @@ const CurrencySelection: React.VFC<CurrencySelectionScreenProps> = ({
   const onToggleRef = useRef(onToggle);
   onToggleRef.current = onToggle;
 
-  const memoizedOnToggle = useCallback((currencyAbbreviation: string) => {
-    onToggleRef.current(currencyAbbreviation);
-  }, []);
+  const memoizedOnToggle = useCallback(
+    (currencyAbbreviation: string, chain: string) => {
+      onToggleRef.current(currencyAbbreviation, chain);
+    },
+    [],
+  );
 
   const memoizedOnViewAllPressed = useMemo(() => {
     return (currency: CurrencySelectionItem) => {

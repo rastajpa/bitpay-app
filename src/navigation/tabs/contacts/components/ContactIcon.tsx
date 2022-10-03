@@ -8,7 +8,7 @@ import {CurrencyImage} from '../../../../components/currency-image/CurrencyImage
 import {SUPPORTED_CURRENCIES} from '../../../../constants/currencies';
 import {useAppSelector} from '../../../../utils/hooks';
 import {RootState} from '../../../../store';
-import {BitpaySupportedEthereumTokenOpts} from '../../../../constants/tokens';
+import {BitpaySupportedTokenOpts} from '../../../../constants/tokens';
 import {Token} from '../../../../store/wallet/wallet.models';
 import {getCurrencyAbbreviation} from '../../../../utils/helper-methods';
 
@@ -50,7 +50,7 @@ const ContactIcon: React.FC<ContactIconProps> = ({
 }) => {
   const tokenOptions = useAppSelector(({WALLET}: RootState) => {
     return {
-      ...BitpaySupportedEthereumTokenOpts,
+      ...BitpaySupportedTokenOpts,
       ...WALLET.tokenOptions,
       ...WALLET.customTokenOptions,
     };
