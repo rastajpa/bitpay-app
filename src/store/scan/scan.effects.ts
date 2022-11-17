@@ -979,11 +979,21 @@ const handleMoonpayUri =
       }),
     );
 
-    navigationRef.navigate('ExternalServicesSettings', {
-      screen: 'MoonpaySettings',
-      params: {
-        incomingPaymentRequest: stateParams,
-      },
+    navigationRef.reset({
+      index: 2,
+      routes: [
+        {
+          name: 'Tabs',
+          params: {screen: 'Home'},
+        },
+        {
+          name: 'ExternalServicesSettings',
+          params: {
+            screen: 'MoonpaySettings',
+            params: {incomingPaymentRequest: stateParams},
+          },
+        },
+      ],
     });
   };
 
@@ -1029,11 +1039,21 @@ const handleSimplexUri =
       }),
     );
 
-    navigationRef.navigate('ExternalServicesSettings', {
-      screen: 'SimplexSettings',
-      params: {
-        incomingPaymentRequest: stateParams,
-      },
+    navigationRef.reset({
+      index: 2,
+      routes: [
+        {
+          name: 'Tabs',
+          params: {screen: 'Home'},
+        },
+        {
+          name: 'ExternalServicesSettings',
+          params: {
+            screen: 'SimplexSettings',
+            params: {incomingPaymentRequest: stateParams},
+          },
+        },
+      ],
     });
   };
 
@@ -1105,11 +1125,21 @@ const handleWyreUri =
       }),
     );
 
-    navigationRef.navigate('ExternalServicesSettings', {
-      screen: 'WyreSettings',
-      params: {
-        incomingPaymentRequest: stateParams,
-      },
+    navigationRef.reset({
+      index: 2,
+      routes: [
+        {
+          name: 'Tabs',
+          params: {screen: 'Home'},
+        },
+        {
+          name: 'ExternalServicesSettings',
+          params: {
+            screen: 'WyreSettings',
+            params: {incomingPaymentRequest: stateParams},
+          },
+        },
+      ],
     });
   };
 
