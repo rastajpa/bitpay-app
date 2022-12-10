@@ -105,6 +105,9 @@ import {Analytics, handleBwsEvent} from './store/app/app.effects';
 import NotificationsSettingsStack, {
   NotificationsSettingsStackParamsList,
 } from './navigation/tabs/settings/notifications/NotificationsStack';
+import ZenLedgerStack, {
+  ZenLedgerStackParamList,
+} from './navigation/zenledger/ZenLedgerStack';
 
 // ROOT NAVIGATION CONFIG
 export type RootStackParamList = {
@@ -125,6 +128,7 @@ export type RootStackParamList = {
   ExternalServicesSettings: NavigatorScreenParams<ExternalServicesSettingsStackParamList>;
   About: NavigatorScreenParams<AboutStackParamList>;
   Coinbase: NavigatorScreenParams<CoinbaseStackParamList>;
+  ZenLedger: NavigatorScreenParams<ZenLedgerStackParamList>;
   BuyCrypto: NavigatorScreenParams<BuyCryptoStackParamList>;
   SwapCrypto: NavigatorScreenParams<SwapCryptoStackParamList>;
   WalletConnect: NavigatorScreenParams<WalletConnectStackParamList>;
@@ -151,6 +155,7 @@ export enum RootStacks {
   EXTERNAL_SERVICES_SETTINGS = 'ExternalServicesSettings',
   ABOUT = 'About',
   COINBASE = 'Coinbase',
+  ZENLEDGER = 'ZenLedger',
   BUY_CRYPTO = 'BuyCrypto',
   SWAP_CRYPTO = 'SwapCrypto',
   WALLET_CONNECT = 'WalletConnect',
@@ -172,6 +177,7 @@ export type NavScreenParams = NavigatorScreenParams<
     ExternalServicesSettingsStackParamList &
     AboutStackParamList &
     CoinbaseStackParamList &
+    ZenLedgerStackParamList &
     BuyCryptoStackParamList &
     SwapCryptoStackParamList &
     ScanStackParamList &
@@ -518,6 +524,10 @@ export default () => {
             />
             <Root.Screen name={RootStacks.ABOUT} component={AboutStack} />
             <Root.Screen name={RootStacks.COINBASE} component={CoinbaseStack} />
+            <Root.Screen
+              name={RootStacks.ZENLEDGER}
+              component={ZenLedgerStack}
+            />
             <Root.Screen
               name={RootStacks.BUY_CRYPTO}
               component={BuyCryptoStack}
