@@ -1,18 +1,38 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {View} from 'react-native';
 import styled from 'styled-components/native';
 import KeyIcon from '../../../../assets/img/key-icon.svg';
 import {H4, Smallest} from '../../../components/styled/Text';
-import ZLWalletSelector, {ZLWallet} from '../components/ZLWalletSelector';
+import ZLWalletSelector from '../components/ZLWalletSelector';
 import {
   CtaContainerAbsolute,
   ScreenGutter,
 } from '../../../components/styled/Containers';
 import Button from '../../../components/button/Button';
 import {useAppDispatch, useAppSelector} from '../../../utils/hooks';
-import {convertToFiat, formatFiatAmount} from '../../../utils/helper-methods';
+import {
+  convertToFiat,
+  formatFiatAmount,
+  sleep,
+} from '../../../utils/helper-methods';
 import {toFiat} from '../../../store/wallet/utils/wallet';
+import {getZenLedgerUrl} from '../../../store/zenledger/zenledger.effects';
+import {
+  ZLRequestWalletsType,
+  ZLWallet,
+} from '../../../store/zenledger/zenledger.models';
+import haptic from '../../../components/haptic-feedback/haptic';
+import {openUrlWithInAppBrowser} from '../../../store/app/app.effects';
+import {
+  dismissOnGoingProcessModal,
+  showBottomNotificationModal,
+  showOnGoingProcessModal,
+} from '../../../store/app/app.actions';
+import {OnGoingProcessMessages} from '../../../components/modal/ongoing-process/OngoingProcess';
+import {CustomErrorMessage} from '../../wallet/components/ErrorMessages';
+import {BWCErrorMessage} from '../../../constants/BWCError';
+import {BottomNotificationConfig} from '../../../components/modal/bottom-notification/BottomNotification';
 
 const ZenLedgerRootContainer = styled.View`
   flex: 1;
@@ -82,6 +102,7 @@ const ZenLedgerRoot: React.FC = () => {
             img,
             badgeImg,
             checked: false,
+            chain,
           };
         });
       return {
@@ -94,6 +115,31 @@ const ZenLedgerRoot: React.FC = () => {
     });
   };
   const [allKeys, setAllkeys] = useState(setFormattedKeys());
+
+  const getRequestWallets = () => {
+    let requestWallets: ZLRequestWalletsType[] = [];
+    allKeys.forEach(key => {
+      key.wallets.forEach(wallet => {
+        const {checked, receiveAddress, walletName = '', chain} = wallet;
+        if (checked && receiveAddress) {
+          requestWallets.push({
+            address: receiveAddress,
+            blockchain: chain,
+            display_name: walletName,
+          });
+        }
+      });
+    });
+    return requestWallets;
+  };
+
+  const showErrorMessage = useCallback(
+    async (msg: BottomNotificationConfig) => {
+      await sleep(500);
+      dispatch(showBottomNotificationModal(msg));
+    },
+    [dispatch],
+  );
 
   return (
     <ZenLedgerRootContainer>
@@ -161,8 +207,28 @@ const ZenLedgerRoot: React.FC = () => {
       />
       <CtaContainerAbsolute>
         <Button
-          onPress={() => {
-            // TODO
+          onPress={async () => {
+            try {
+              haptic('impactLight');
+              dispatch(
+                showOnGoingProcessModal(t(OnGoingProcessMessages.LOADING)),
+              );
+              const {url} = (await dispatch<any>(
+                getZenLedgerUrl(getRequestWallets()),
+              )) as any;
+              dispatch(dismissOnGoingProcessModal());
+              await sleep(500);
+              dispatch(openUrlWithInAppBrowser(url));
+            } catch (e) {
+              dispatch(dismissOnGoingProcessModal());
+              await sleep(500);
+              await showErrorMessage(
+                CustomErrorMessage({
+                  errMsg: BWCErrorMessage(e),
+                  title: t('Uh oh, something went wrong'),
+                }),
+              );
+            }
           }}
           buttonStyle={'primary'}
           disabled={

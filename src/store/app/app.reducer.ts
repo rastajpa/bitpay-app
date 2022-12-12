@@ -111,6 +111,7 @@ export interface AppState {
   failedAppInit: boolean;
   checkingBiometricForSending: boolean;
   onCompleteOnboardingList: Array<string>;
+  zenLedgerIntroCompleted: boolean;
 }
 
 const initialState: AppState = {
@@ -180,6 +181,7 @@ const initialState: AppState = {
   failedAppInit: false,
   checkingBiometricForSending: false,
   onCompleteOnboardingList: [],
+  zenLedgerIntroCompleted: false,
 };
 
 export const appReducer = (
@@ -571,6 +573,11 @@ export const appReducer = (
       return {
         ...state,
         onCompleteOnboardingList: [],
+      };
+    case AppActionTypes.SET_ZENLEDGER_INTRO_COMPLETED:
+      return {
+        ...state,
+        zenLedgerIntroCompleted: true,
       };
 
     default:

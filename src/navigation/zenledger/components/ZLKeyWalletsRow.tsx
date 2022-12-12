@@ -14,7 +14,7 @@ import {
 } from '../../../components/styled/Containers';
 import ChevronDownSvg from '../../../../assets/img/chevron-down.svg';
 import ChevronUpSvg from '../../../../assets/img/chevron-up.svg';
-import {ZLKey, ZLWallet} from './ZLWalletSelector';
+import {ZLKey, ZLWallet} from '../../../store/zenledger/zenledger.models';
 
 interface KeyWalletsRowContainerProps {
   isLast?: boolean;

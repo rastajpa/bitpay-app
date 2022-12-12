@@ -73,6 +73,7 @@ export enum AppActionTypes {
   CHECKING_BIOMETRIC_FOR_SENDING = 'APP/CHECKING_BIOMETRIC_FOR_SENDING',
   UPDATE_ON_COMPLETE_ONBOARDING_LIST = 'APP/UPDATE_ON_COMPLETE_ONBOARDING_LIST',
   CLEAR_ON_COMPLETE_ONBOARDING_LIST = 'APP/CLEAR_ON_COMPLETE_ONBOARDING_LIST',
+  SET_ZENLEDGER_INTRO_COMPLETED = 'APP/SET_ZENLEDGER_INTRO_COMPLETED',
 }
 
 interface NetworkChanged {
@@ -335,6 +336,10 @@ interface clearOnCompleteOnboardingList {
   type: typeof AppActionTypes.CLEAR_ON_COMPLETE_ONBOARDING_LIST;
 }
 
+interface SetZenLedgerIntroCompleted {
+  type: typeof AppActionTypes.SET_ZENLEDGER_INTRO_COMPLETED;
+}
+
 export type AppActionType =
   | NetworkChanged
   | SuccessAppInit
@@ -391,4 +396,5 @@ export type AppActionType =
   | ActiveModalUpdated
   | checkingBiometricForSending
   | updateOnCompleteOnboarding
-  | clearOnCompleteOnboardingList;
+  | clearOnCompleteOnboardingList
+  | SetZenLedgerIntroCompleted;

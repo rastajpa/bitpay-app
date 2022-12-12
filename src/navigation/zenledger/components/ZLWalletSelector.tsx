@@ -1,4 +1,4 @@
-import React, {ReactElement} from 'react';
+import React from 'react';
 import {H5, TextAlign} from '../../../components/styled/Text';
 import {WalletSelectMenuHeaderContainer} from '../../wallet/screens/GlobalSelect';
 import ZLKeyWalletsRow from './ZLKeyWalletsRow';
@@ -6,42 +6,18 @@ import {useTranslation} from 'react-i18next';
 import {View} from 'react-native';
 import styled from 'styled-components/native';
 import {ScreenGutter} from '../../../components/styled/Containers';
+import {ZLKey, ZLWallet} from '../../../store/zenledger/zenledger.models';
 
-export const ZLKeyWalletCRowContainer = styled.View`
+export const ZLKeyRowContainer = styled.View`
   padding: 0 ${ScreenGutter} 2px;
 `;
-
-export type ZLKey = {
-  keyName: string | undefined;
-  keyId: string;
-  checked: boolean;
-  showWallets: boolean;
-  wallets: ZLWallet[];
-};
-
-export type ZLWallet = {
-  id: string;
-  walletName: string | undefined;
-  currencyName: string;
-  receiveAddress: string | undefined;
-  hideWallet: boolean | undefined;
-  hideBalance: boolean | undefined;
-  fiatBalance: string;
-  img: string | ((props?: any) => ReactElement);
-  badgeImg: string | ((props?: any) => ReactElement) | undefined;
-  checked: boolean;
-};
-
-export type WalletConnectIntroParamList = {
-  uri?: string;
-};
 
 export default ({
   keys,
   onPress,
   onDropdownPress,
 }: {
-  keys: any;
+  keys: ZLKey[];
   onPress: (keyId: string, wallet?: ZLWallet) => void;
   onDropdownPress: (keyId: string) => void;
 }) => {
@@ -49,13 +25,13 @@ export default ({
   return (
     <View style={{marginTop: 12, marginBottom: 80}}>
       {keys && keys.length ? (
-        <ZLKeyWalletCRowContainer>
+        <ZLKeyRowContainer>
           <ZLKeyWalletsRow
             keys={keys}
             onPress={onPress}
             onDropdownPress={onDropdownPress}
           />
-        </ZLKeyWalletCRowContainer>
+        </ZLKeyRowContainer>
       ) : (
         <WalletSelectMenuHeaderContainer>
           <TextAlign align={'center'}>

@@ -37,6 +37,10 @@ const Connections: React.FC<ConnectionsProps> = props => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const {connectors} = useAppSelector(({WALLET_CONNECT}) => WALLET_CONNECT);
+  const zenLedgerIntroCompleted = useAppSelector(
+    ({APP}) => APP.zenLedgerIntroCompleted,
+  );
+
   const [showModal, setShowModal] = useState(false);
 
   const goToWalletConnect = useCallback(() => {
@@ -75,16 +79,6 @@ const Connections: React.FC<ConnectionsProps> = props => {
         screen: 'CoinbaseRoot',
       });
     }
-  };
-
-  const showZenLedgerModal = () => {
-    haptic('impactLight');
-    dispatch(
-      logSegmentEvent('track', 'Clicked ZenLedger', {
-        context: 'Settings Connections',
-      }),
-    );
-    setShowModal(true);
   };
 
   const goToZenLedger = () => {
@@ -127,7 +121,16 @@ const Connections: React.FC<ConnectionsProps> = props => {
         <AngleRight />
       </Setting>
       <Hr />
-      <Setting onPress={() => showZenLedgerModal()}>
+      <Setting
+        onPress={() => {
+          haptic('impactLight');
+          dispatch(
+            logSegmentEvent('track', 'Clicked ZenLedger', {
+              context: 'Settings Connections',
+            }),
+          );
+          !zenLedgerIntroCompleted ? setShowModal(true) : goToZenLedger();
+        }}>
         <ConnectionItemContainer>
           <ConnectionIconContainer>
             <ZenLedgerIcon width={30} height={25} />

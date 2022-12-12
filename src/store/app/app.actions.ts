@@ -316,3 +316,7 @@ export const updateOnCompleteOnboarding = (payload: string): AppActionType => ({
 export const clearOnCompleteOnboardingList = (): AppActionType => ({
   type: AppActionTypes.CLEAR_ON_COMPLETE_ONBOARDING_LIST,
 });
+
+export const setZenLedgerIntroCompleted = (): AppActionType => ({
+  type: AppActionTypes.SET_ZENLEDGER_INTRO_COMPLETED,
+});
