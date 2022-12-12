@@ -33,6 +33,7 @@ import {OnGoingProcessMessages} from '../../../components/modal/ongoing-process/
 import {CustomErrorMessage} from '../../wallet/components/ErrorMessages';
 import {BWCErrorMessage} from '../../../constants/BWCError';
 import {BottomNotificationConfig} from '../../../components/modal/bottom-notification/BottomNotification';
+import {useNavigation} from '@react-navigation/native';
 
 const ZenLedgerRootContainer = styled.View`
   flex: 1;
@@ -49,6 +50,7 @@ const ZenLedgerTitleContainer = styled.View`
 const ZenLedgerRoot: React.FC = () => {
   const {t} = useTranslation();
   const dispatch = useAppDispatch();
+  const navigation = useNavigation();
   const {keys} = useAppSelector(({WALLET}) => WALLET);
   const defaultAltCurrency = useAppSelector(({APP}) => APP.defaultAltCurrency);
   const {rates} = useAppSelector(({RATE}) => RATE);
@@ -216,6 +218,8 @@ const ZenLedgerRoot: React.FC = () => {
               dispatch(dismissOnGoingProcessModal());
               await sleep(500);
               dispatch(openUrlWithInAppBrowser(url));
+              await sleep(500);
+              navigation.goBack();
             } catch (e) {
               dispatch(dismissOnGoingProcessModal());
               await sleep(500);

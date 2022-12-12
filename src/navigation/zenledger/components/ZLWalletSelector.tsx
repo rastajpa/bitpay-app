@@ -23,7 +23,7 @@ export default ({
 }) => {
   const {t} = useTranslation();
   return (
-    <View style={{marginTop: 12, marginBottom: 80}}>
+    <View style={{marginTop: 12, marginBottom: 100}}>
       {keys && keys.length ? (
         <ZLKeyRowContainer>
           <ZLKeyWalletsRow
