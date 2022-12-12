@@ -59,7 +59,7 @@ const CheckBoxContainer = styled.View`
   margin-right: 12px;
 `;
 
-const KeyContainer = styled.View`
+const KeyContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   display: flex;
@@ -110,11 +110,16 @@ const ZLKeyWalletsRow = ({keys, onPress, onDropdownPress}: ZKeyWalletProps) => {
     ({item, isLast}) => {
       const {wallets, keyName, checked, keyId, showWallets} = item;
 
+      const _onDropdownPress = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        onDropdownPress(keyId);
+      };
+
       return wallets.length ? (
         <KeyWalletsRowContainer key={keyId} isLast={isLast}>
           <>
             <Hr style={{marginHorizontal: -12}} />
-            <KeyContainer>
+            <KeyContainer onPress={_onDropdownPress}>
               <KeyNameContainer>
                 <KeyBox keyId={keyId} onPress={onPress} checked={checked} />
                 <KeySvg />
@@ -123,12 +128,7 @@ const ZLKeyWalletsRow = ({keys, onPress, onDropdownPress}: ZKeyWalletProps) => {
               <View style={{justifyContent: 'flex-end', display: 'flex'}}>
                 <DropdownButton
                   activeOpacity={ActiveOpacity}
-                  onPress={() => {
-                    LayoutAnimation.configureNext(
-                      LayoutAnimation.Presets.easeInEaseOut,
-                    );
-                    onDropdownPress(keyId);
-                  }}>
+                  onPress={_onDropdownPress}>
                   <SettingIcon suffix>
                     {!showWallets ? <ChevronDownSvg /> : <ChevronUpSvg />}
                   </SettingIcon>

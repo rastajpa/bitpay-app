@@ -34,6 +34,7 @@ import {CustomErrorMessage} from '../../wallet/components/ErrorMessages';
 import {BWCErrorMessage} from '../../../constants/BWCError';
 import {BottomNotificationConfig} from '../../../components/modal/bottom-notification/BottomNotification';
 import {useNavigation} from '@react-navigation/native';
+import {Network} from '../../../constants';
 
 const ZenLedgerRootContainer = styled.View`
   flex: 1;
@@ -60,7 +61,9 @@ const ZenLedgerRoot: React.FC = () => {
   const setFormattedKeys = () => {
     return _allKeys.map(key => {
       const formattedWallet = key.wallets
-        .filter(({balance}) => balance.sat)
+        .filter(
+          ({balance, network}) => balance.sat && network === Network.mainnet,
+        )
         .map(wallet => {
           const {
             currencyName,
@@ -159,6 +162,7 @@ const ZenLedgerRoot: React.FC = () => {
       <ZLWalletSelector
         keys={allKeys}
         onPress={(keyId: string, wallet?: ZLWallet) => {
+          haptic('impactLight');
           if (!wallet) {
             setAllkeys(prev => {
               prev &&
@@ -193,6 +197,7 @@ const ZenLedgerRoot: React.FC = () => {
           }
         }}
         onDropdownPress={keyId => {
+          haptic('impactLight');
           setAllkeys(prev => {
             prev &&
               prev.forEach(k => {
