@@ -92,8 +92,11 @@ const Connections: React.FC<ConnectionsProps> = props => {
       // reset params to prevent re-triggering
       navigation.setParams({redirectTo: undefined} as any);
       goToWalletConnect();
+    } else if (redirectTo === 'zenledger') {
+      navigation.setParams({redirectTo: undefined} as any);
+      goToZenLedger();
     }
-  }, [redirectTo, goToWalletConnect, navigation]);
+  }, [redirectTo, goToWalletConnect, goToZenLedger, navigation]);
 
   return (
     <SettingsComponent>

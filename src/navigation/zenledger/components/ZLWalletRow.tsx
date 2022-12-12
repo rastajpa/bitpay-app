@@ -9,10 +9,10 @@ import {
   RowContainer,
 } from '../../../components/styled/Containers';
 import {H5, ListItemSubText} from '../../../components/styled/Text';
+import {ZLWallet} from '../../../store/zenledger/zenledger.models';
 import {formatCryptoAddress} from '../../../utils/helper-methods';
 import {PillContainer, PillText} from '../../wallet/components/SendToPill';
 import {SendToPillContainer} from '../../wallet/screens/send/confirm/Shared';
-import {ZLWallet} from './ZLWalletSelector';
 
 const BalanceColumn = styled(Column)`
   align-items: flex-end;

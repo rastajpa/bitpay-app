@@ -164,7 +164,6 @@ const ZenLedgerRoot: React.FC = () => {
                   if (k && k.keyId === keyId) {
                     k.checked = !k.checked;
                     k.wallets?.forEach((w: ZLWallet) => {
-                      console.log(w.checked);
                       w.checked = k.checked;
                       return w;
                     });
@@ -184,9 +183,7 @@ const ZenLedgerRoot: React.FC = () => {
                       }
                       return w;
                     });
-                    k.checked = Object.values(wallets).every(w => w.checked)
-                      ? true
-                      : false;
+                    k.checked = Object.values(wallets).every(w => w.checked);
                   }
                 });
               return [...prev];
