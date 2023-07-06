@@ -200,8 +200,6 @@ const WalletConnectHome = () => {
       let _wallet;
       dispatch(dismissBottomNotificationModal());
       await sleep(500);
-      dispatch(startOnGoingProcessModal('LOADING'));
-
       const {
         to: toAddress,
       } = request.params.request.params[0];
@@ -220,8 +218,6 @@ const WalletConnectHome = () => {
         },
       });
     } catch (error: any) {
-      dispatch(dismissOnGoingProcessModal());
-      await sleep(500);
       await showErrorMessage(
         CustomErrorMessage({
           errMsg: BWCErrorMessage(error.err ? error.err : error),
